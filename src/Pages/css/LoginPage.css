@@ -1,0 +1,17 @@
+body{
+    background-color: #151718;
+    color: white;
+}
+
+a{
+    color:#FFFFFFCC ;
+    text-decoration: none;
+}
+a.active{
+    color:#3CA1FF;
+    text-decoration: none;
+}
+
+#navbar, #inputfield{
+    border-color:grey !important;
+}

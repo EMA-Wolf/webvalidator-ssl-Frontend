@@ -1,0 +1,15 @@
+#sidebar a{
+    color:#FFFFFFCC ;
+    text-decoration: none;
+}
+
+#sidebar a.active{
+    color:white;
+    text-decoration: none;
+    background-color: #3CA1FF;
+    border: none !important;
+}
+
+#sidebar .header{
+    border-color:grey !important;
+}
