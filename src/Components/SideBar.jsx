@@ -20,7 +20,7 @@ const SideBar = () => {
             <div className='header d-flex justify-content-center pt-4 pb-3 border-bottom'><h3>Site Checker</h3></div>
 
            
-                <Nav className="flex-column align-items-center justify-content-between pt-5 pb-5 vh-100" style={{fontSize:"1.3rem"}}>
+                <Nav className="flex-column align-items-center gap-5 pt-5 pb-5 vh-100" style={{fontSize:"1.3rem"}}>
 
                 <NavLink to="/home" className='p-3 border w-100 rounded'>
                     <div className='d-flex align-items-center gap-2'><IoSearch /> <span>Site Checker</span></div>
@@ -29,14 +29,14 @@ const SideBar = () => {
                 <NavLink to="/sslgenerator" className='p-3 border w-100 rounded'>
                     <div className='d-flex align-items-center gap-2'><IoDocumentTextSharp /> <span>SSL Generator</span></div>
                 </NavLink>
-
+{/* 
                 <NavLink to="n" className='p-3 border w-100 rounded'>
                     <div className='d-flex align-items-center gap-2'><IoSearch /> <span>Active</span></div>
                 </NavLink>
 
                 <NavLink to="n" className='p-3 border w-100 rounded'>
                     <div className='d-flex align-items-center gap-2'><IoSearch /> <span>Active</span></div>
-                </NavLink>
+                </NavLink> */}
 
                 </Nav>
            

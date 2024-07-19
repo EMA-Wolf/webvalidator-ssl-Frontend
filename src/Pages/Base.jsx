@@ -22,7 +22,7 @@ const confrimDeletion = () =>{
 
 const user = JSON.parse(localStorage.getItem('User'));
 
-axios.post("https://webvalidator-ssl-backend.onrender.com/api/sites/deleteSites",{_id:user._id, sites:deletedSiteList}).then(res=>{
+axios.post("https://webvalidator-ssl-backend.onrender.com/api/sites/deleteSites",{_id:user._id, sites:deletedSiteList,username:user.username}).then(res=>{
   
   user.sites= [...res.data.resultsResponse]
 

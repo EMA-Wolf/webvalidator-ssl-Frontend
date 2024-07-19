@@ -104,8 +104,8 @@ const DragDropFiles = ({toggle, setSites, siteList}) => {
             {Array.from(files).map((file,index) =>(<p style={{fontSize:"1.2rem"}} key={index}>{file.name}</p>))}
 
             <div className='d-flex gap-3 justify-content-end w-100'>
-                <Button onClick={cancel}>no</Button>
-                <Button onClick={completeFileImportation}>yes</Button>
+                <Button variant='danger' onClick={cancel}>cancel</Button>
+                <Button variant='success' onClick={completeFileImportation}>Import</Button>
             </div>
         </div>
         )

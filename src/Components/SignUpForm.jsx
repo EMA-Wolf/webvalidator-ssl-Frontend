@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form"
 import { Spinner } from 'react-bootstrap'
 import axios from "axios"
 import { toast } from 'react-toastify'
+
 const SignUpForm = () => {
     const navigate = useNavigate()
     const [loading, setLoading]=useState(false)
@@ -17,12 +18,9 @@ const SignUpForm = () => {
 
     const handleSubmit = (e) =>{
         e.preventDefault()
-        // console.log(User)
+        setLoading(true)
 
         axios.post("https://webvalidator-ssl-backend.onrender.com/api/auth/Signup",User).then(res =>{
-            setLoading(true)
-            // console.log(res.data)
-
             if(res.data.message === "User created Succefully"){
                 localStorage.setItem("User",JSON.stringify(res.data.user))
                 setLoading(false)
@@ -34,6 +32,7 @@ const SignUpForm = () => {
             }
             
         }).catch(err=>{
+            setLoading(false)
             toast.error(`${err.response.data.message}`)
             console.log(err.response.data.message)}
     )

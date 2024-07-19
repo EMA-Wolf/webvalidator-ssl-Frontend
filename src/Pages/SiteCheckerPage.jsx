@@ -56,7 +56,7 @@ const SiteCheckerPage = () => {
     // Retrieve the User object from localStorage
     const user = JSON.parse(localStorage.getItem('User'));
 
-    axios.post("https://webvalidator-ssl-backend.onrender.com/api/sites/getsiteinfo", {_id:user._id, name:singleSite.name}).then(res=>{
+    axios.post("https://webvalidator-ssl-backend.onrender.com/api/sites/getsiteinfo", {_id:user._id, name:singleSite.name,username:user.username}).then(res=>{
       if(res.data.resultsResponse === null){
         // setErrorMessages(res.data.error)
         setIsSingleProcessing(false)
@@ -177,6 +177,11 @@ const SiteCheckerPage = () => {
     const user = JSON.parse(localStorage.getItem('User'));
 
     axios.post("https://webvalidator-ssl-backend.onrender.com/api/sites/getsiteinfo",{_id:user._id,name}).then(res=>{
+
+      if(res.data.resultsResponse===null){
+        toast.error(`${res.data.error[name].status}`)
+      }
+      
       user.sites= [...res.data.resultsResponse]
 
       // Save the updated User object back to localStorage
@@ -204,7 +209,7 @@ const SiteCheckerPage = () => {
       // Update the User.sites with siteList
       user.sites = siteList;
   
-      axios.post("https://webvalidator-ssl-backend.onrender.com/api/sites/getallsitesinfo", user)
+      axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/sites/getallsitesinfo`, user)
         .then(res => {
           // On success, update the User.sites array with the new data from the response
           user.sites = res.data.success;
@@ -322,7 +327,7 @@ const SiteCheckerPage = () => {
       <Button variant='danger' onClick={handleDelete} disabled={selectedSitesList.length === 0}>Delete</Button>
       </div>
 
-    <SitesTable sites={siteList} trigger={tableTrigger}  singleSiteRun={runASite}  setSelectedSites={setSelectedSitesList} selectedSites={selectedSitesList}/>
+    <SitesTable  sites={siteList} trigger={tableTrigger}  singleSiteRun={runASite}  setSelectedSites={setSelectedSitesList} selectedSites={selectedSitesList}/>
 
 
     </div>

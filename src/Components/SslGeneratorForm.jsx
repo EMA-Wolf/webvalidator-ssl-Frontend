@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react'
 import { Form, Button, Alert } from 'react-bootstrap';
 
-const SslGeneratorForm = () => {
+const SslGeneratorForm = ({setCertificate}) => {
     const [details, setDetails] = useState( {
         domain:"",
         email:''
@@ -10,9 +10,10 @@ const SslGeneratorForm = () => {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [certificateData, setCertificateData] = useState(null);
+    // const [certificateData, setCertificateData] = useState(null);
     const [challengeData, setChallengeData] = useState(null);
-    const [challengeVerified, setChallengeVerified] = useState(false);
+    const [message, setMessage] = useState("s;dkf;sldkf;lksd;lfk;slf")
+    const [challengeVerified, setChallengeVerified] = useState(true);
 
     const handleSubmit = (e) =>{
         e.preventDefault()
@@ -41,6 +42,7 @@ const SslGeneratorForm = () => {
             }
 
             setChallengeData(res.data.challengeData);
+            setMessage(res.data.message)
         }).catch(err => {
             setError(err.message);
             setLoading(false);
@@ -65,6 +67,8 @@ const SslGeneratorForm = () => {
         element.download = challengeData.httpChallenge.token;
         document.body.appendChild(element);
         element.click();
+
+
     };
 
     const handleVerifyChallenge = () => {
@@ -74,15 +78,16 @@ const SslGeneratorForm = () => {
                 return
             }
 
-            setCertificateData(res.data.sslCertificate)
+            // setCertificateData(res.data.sslCertificate)
+            setCertificate(res.data.sslCertificate)
             alert('Domain verified and SSL Certificate generated successfully.');
         }).catch(err=>{
             setError('Error verifying domain.');
         })
     };
 
-    console.log(challengeData)
-    console.log(certificateData)
+    // console.log(challengeData)
+    // console.log(certificateData)
 
   return (
     <div  style={{ backgroundColor: "#242627" }} className='p-4 w-50 rounded'>
@@ -102,7 +107,7 @@ const SslGeneratorForm = () => {
                 value={details.domain}
                 onChange={(e) => setDetails({...details,domain:e.target.value})}
                 required
-                 className='p-3'
+                 style={{padding:"0.8rem"}}
                 />
                 
             </Form.Group>
@@ -116,7 +121,7 @@ const SslGeneratorForm = () => {
                 value={details.email}
                 onChange={(e) => setDetails({...details,email:e.target.value})}
                 required
-                className='p-3'
+                style={{padding:"0.8rem"}}
                 />
                 
             </Form.Group>
@@ -128,15 +133,18 @@ const SslGeneratorForm = () => {
         </Button>
 
         {error && <Alert variant='danger' className='mt-3'>{error}</Alert>}
+
         {challengeData && !challengeVerified && (
                     <div className='mt-3'>
-                        <h5>Download and Verify Challenge File</h5>
-                        <Button variant='secondary' onClick={handleDownloadChallenge}>Download Challenge File</Button>
+                        <h5 style={{marginBottom:"1rem", marginTop:"1rem"}}>Download and Verify Challenge File</h5>
+                        {message&&<h6 style={{color:"Highlight"}}>{message}</h6>}
+                        <Button variant='secondary' onClick={handleDownloadChallenge} style={{marginRight:"1rem"}}>Download Challenge File</Button>
                         <Button variant='secondary' onClick={handleVerifyChallenge} className='ml-2'>Verify Challenge</Button>
                     </div>
                 )}
 
-                {certificateData && (
+
+                {/* {certificateData && (
                     <Alert variant='success' className='mt-3' style={{overflowY:"scroll"}}>
                         <h5>Certificate Generated Successfully</h5>
                         <p>Private Key:</p>
@@ -144,7 +152,7 @@ const SslGeneratorForm = () => {
                         <p>Certificate:</p>
                         <pre>{certificateData.certificate}</pre>
                     </Alert>
-                )}
+                )} */}
       
     </Form>
     </div>

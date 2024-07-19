@@ -64,7 +64,7 @@ const SitesTable = ({sites, deleteFunction, trigger, singleSiteRun, selectedSite
       // console.log(sites)
   return (
     <div>
-          <Table striped bordered hover variant="dark">
+          <Table striped bordered hover variant="dark" >
         <thead>
           <tr>
             <th></th>
