@@ -46,7 +46,7 @@ const SitesTable = ({sites, deleteFunction, trigger, singleSiteRun, selectedSite
         }
 
         return (
-          <td style={{ color: 'blue' }}>
+          <td style={{ color: 'white' }}>
             {redirectTo ? `Redirects to ${redirectTo}` : 'No Redirect'}
           </td>
         );
