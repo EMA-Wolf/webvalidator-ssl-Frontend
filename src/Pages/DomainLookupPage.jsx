@@ -42,7 +42,7 @@ const DomainLookupPage = () => {
         if (domain !== '' && urlRegex.test(domain)) {
             setIsSingleProcessing(true)
 
-        axios.post("http://localhost:3002/api/scan/domain", { domain }).then(res=>{
+        axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/scan/domain`, { domain }).then(res=>{
             console.log(res.data.details)
             const whoisData = parseWhoisData(res.data.details);
             setDomainDetails(whoisData);
