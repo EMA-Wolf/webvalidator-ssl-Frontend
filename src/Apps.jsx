@@ -7,6 +7,7 @@ import LoginForm from './Components/LoginForm'
 import SiteCheckerPage from './Pages/SiteCheckerPage'
 import { ToastContainer } from 'react-toastify'
 import SslGeneratorPage from './Pages/SslGeneratorPage'
+import DomainLookupPage from './Pages/DomainLookupPage'
 const Apps = () => {
   return (
     <>
@@ -22,6 +23,7 @@ const Apps = () => {
              <Route  element={ <Base /> }>
                    <Route path='/home' element={<SiteCheckerPage/>}></Route>
                    <Route path='/sslgenerator' element={<SslGeneratorPage/>}></Route>
+                   <Route path='/domainLookup' element={<DomainLookupPage/>}></Route>
                 </Route>
 
             </Routes>
