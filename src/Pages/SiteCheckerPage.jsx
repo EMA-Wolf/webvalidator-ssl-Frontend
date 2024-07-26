@@ -1,6 +1,7 @@
 import { useState, useEffect, React } from 'react'
 import { FaPlay } from "react-icons/fa";
 import { IoPerson } from "react-icons/io5";
+import { IoIosNotifications } from "react-icons/io";
 // import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
@@ -15,8 +16,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import axios from "axios"
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
-import { useOutletContext } from 'react-router-dom';
-import { Spinner } from 'react-bootstrap';
+import { useOutletContext, Link } from 'react-router-dom';
+import {  Spinner, Dropdown } from 'react-bootstrap';
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -274,14 +275,29 @@ const SiteCheckerPage = () => {
           {isRunAllProcessing ? <Spinner animation="border" /> : <> <FaPlay /> <span>Run all</span></>}
           </Button>
 
-          <div className='d-flex align-items-center'>
-            <img style={{ width: "auto", height: "1.5rem" }} src={sun} alt="" />
+        <Dropdown>
+                  <Dropdown.Toggle variant='none' id="dropdown-basic" className='d-flex align-items-center'>
+                      <div className='d-flex align-items-center'>
+                          <IoIosNotifications style={{fontSize:"2rem", color:"white"}}/>
+                            <span style={{color:"red"}}>{errorMessages.length}</span>
+                      </div>
+                  </Dropdown.Toggle>
 
-            <img style={{ width: "auto", height: "1.5rem" }} src={moon} alt="" />
-          </div>
+             {errorMessages>0 && <Dropdown.Menu>
+                    {errorMessages.map(errorMessage =>
+                    <>
+                    <Dropdown.Item key={errorMessage}>
+                        {`${errorMessage.name}: ${errorMessage.status}`}
+                    </Dropdown.Item>
+                    </>)}
+              </Dropdown.Menu>}
+                  
+        </Dropdown>
 
           {/* Account icon */}
+          <Link to="/profile">
           <div className='pt-0 p-1 rounded border ' style={{ backgroundColor: "#242627", fontSize: "1.2rem" }}><IoPerson /></div>
+          </Link>
         </div>
       </Navbar>
 

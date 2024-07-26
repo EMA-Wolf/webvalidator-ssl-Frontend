@@ -20,6 +20,8 @@ const SslGeneratorForm = ({ setCertificate }) => {
         e.preventDefault()
         setLoading(true);
         setError(null);
+        setChallengeData(null);
+        setCertificate(null);
 
         // axios.post("https://webvalidator-ssl-backend.onrender.com/api/ssl/generate-cert", details).then(res=>{
         //     setLoading(false)
@@ -52,24 +54,8 @@ const SslGeneratorForm = ({ setCertificate }) => {
         // console.log(details)
     }
 
-    // const handleDownloadChallenge = () => {
-    //     const element = document.createElement('a');
-    //     const file = new Blob([challengeData.files[0].keyAuthorization]);
-    //     element.href = URL.createObjectURL(file);
-    //     element.download = challengeData.files[0].token;
-    //     document.body.appendChild(element);
-    //     element.click();
-    // };
 
-    // const handleDownloadChallenge = () => {
-    //     const element = document.createElement('a');
-    //     const file = new Blob([challengeData.keyAuthorization]);
-    //     element.href = URL.createObjectURL(file);
-    //     element.download = challengeData.httpChallenge.token;
-    //     document.body.appendChild(element);
-    //     element.click();
-    // };
-
+   
     const handleDownloadChallenge = () => {
         const element = document.createElement('a');
         const file = new Blob([challengeData.keyAuthorization],{ type: 'application/octet-stream' });
