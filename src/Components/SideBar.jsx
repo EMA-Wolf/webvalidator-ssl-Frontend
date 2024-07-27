@@ -39,10 +39,10 @@ const SideBar = () => {
                 <NavLink to="/domainLookup" className='p-3 border w-100 rounded'>
                     <div className='d-flex align-items-center gap-2'><IoSearch /> <span>Domian Lookup</span></div>
                 </NavLink>
-{/*
-                <NavLink to="n" className='p-3 border w-100 rounded'>
-                    <div className='d-flex align-items-center gap-2'><IoSearch /> <span>Active</span></div>
-                </NavLink> */}
+
+                <NavLink to="/vunlerabilityScan" className='p-3 border w-100 rounded'>
+                    <div className='d-flex align-items-center gap-2'><IoSearch /> <span>Vunlerability Scan</span></div>
+                </NavLink>
 
                 </Nav>
            

@@ -5,19 +5,17 @@ import { IoIosNotifications } from "react-icons/io";
 // import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
-import sun from "../assets/sun.png"
-import moon from "../assets/moon.png"
 import Form from 'react-bootstrap/Form';
 import dayjs from 'dayjs';
 import DragDropFiles from '../Components/DragDropFiles';
 import SitesTable from '../Components/SitesTable';
 import  Alert  from 'react-bootstrap/Alert';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import axios from "axios"
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import { useOutletContext, Link } from 'react-router-dom';
-import {  Spinner, Dropdown } from 'react-bootstrap';
+import { Spinner, Dropdown, ProgressBar } from 'react-bootstrap';
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -40,9 +38,9 @@ const SiteCheckerPage = () => {
   const [isSingleProcessing, setIsSingleProcessing] = useState(false)
   const [isRunAllProcessing, setIsRunAllProcessing] = useState(false)
   const [errorMessages, setErrorMessages] = useState([])
-
   const [tableTrigger, setTableTrigger] = useState(null)
   const [selectedSitesList, setSelectedSitesList] = useState([])
+  const [progress, setProgress] = useState(0);
 
   const toggleFileUpload = () => {
     setToggle(!toggle)
@@ -57,7 +55,7 @@ const SiteCheckerPage = () => {
     // Retrieve the User object from localStorage
     const user = JSON.parse(localStorage.getItem('User'));
 
-    axios.post("https://webvalidator-ssl-backend.onrender.com/api/sites/getsiteinfo", {_id:user._id, name:singleSite.name,username:user.username}).then(res=>{
+    axios.post(`https://webvalidator-ssl-backend.onrender.com/api/sites/getsiteinfo`, {_id:user._id, name:singleSite.name,username:user.username}).then(res=>{
       if(res.data.resultsResponse === null){
         // setErrorMessages(res.data.error)
         setIsSingleProcessing(false)
@@ -160,18 +158,7 @@ const SiteCheckerPage = () => {
     }
   };
 
-  // const runAllChecks = () =>{
-  //   User.sites = siteList
-  //   axios.post("http://localhost:3002/api/sites/getallsitesinfo",User).then(res=>{
-  //     console.log(res.data)
-  //   }).catch(err=>console.log(err))
-  // }
-
-  // const DeleteASite = (name) =>{
-  //   delPopUp(name)
-  //   // console.log(name)
-  // }
-
+  
   const runASite = (name) =>{
     setTableTrigger(name)
 
@@ -194,24 +181,39 @@ const SiteCheckerPage = () => {
       setTableTrigger(null)
     })
 
-    // console.log(name)
-
-    // setTimeout(()=>{
-    //   setTableTrigger(null)
-    // },tableTrigger)
-  }
+}
 
   const runAllChecks = () => {
     setIsRunAllProcessing(true)
+    setProgress(0);
     // Retrieve the User object from localStorage
     const user = JSON.parse(localStorage.getItem('User'));
   
     if (user) {
       // Update the User.sites with siteList
       user.sites = siteList;
-  
-      axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/sites/getallsitesinfo`, user)
+
+      const pollProgress = () => {
+        axios.get(`${import.meta.env.VITE_LOCAL_BACKEND_URL}/api/sites/progress/${user.username}`)
+          .then(res => {
+            setProgress(res.data.progress===100?0:res.data.progress);
+            if (res.data.progress <= 100) {
+              setTimeout(pollProgress, 1000); // Poll every second
+            } else {
+              setIsRunAllProcessing(false);
+            }
+          })
+          .catch(err => {
+            console.log(err);
+            setIsRunAllProcessing(false);
+          });
+      };
+
+      pollProgress();
+        
+      axios.post(`${import.meta.env.VITE_LOCAL_BACKEND_URL}/api/sites/getallsitesinfo`, user)
         .then(res => {
+
           // On success, update the User.sites array with the new data from the response
           user.sites = res.data.success;
   
@@ -219,7 +221,6 @@ const SiteCheckerPage = () => {
           localStorage.setItem('User', JSON.stringify(user));
           setErrorMessages(res.data.errors)
   
-          // console.log('Updated User:', user);
           setIsRunAllProcessing(false); // Reset loading state
 
           const currentTime = new Date().toISOString();
@@ -227,6 +228,8 @@ const SiteCheckerPage = () => {
           localStorage.setItem('lastRunTime', currentTime);
 
           window.location.reload();
+        
+
         })
         .catch(err => {
           console.log(err)
@@ -238,6 +241,7 @@ const SiteCheckerPage = () => {
     }
   };
 
+  
 
   const handleDelete = () => {
     // console.log("Selected sites for deletion:", selectedSitesList);
@@ -246,16 +250,6 @@ const SiteCheckerPage = () => {
   };
 
   
-
-  // const runAllChecks = () =>{
-  //  User.sites = siteList
-  //  console.log(User)
-  // }
-
-  // console.log(siteList)
-  // console.log(singleSite)
-  // console.log(User)
-    // console.log(errorMessages)
   return (
     <div className='w-100 vh-100 ps-4 pe-4' style={{overflowY:"scroll"}}>
 
@@ -342,6 +336,17 @@ const SiteCheckerPage = () => {
       <div className='d-flex justify-content-end pe-3 mb-3'>
       <Button variant='danger' onClick={handleDelete} disabled={selectedSitesList.length === 0}>Delete</Button>
       </div>
+
+      {isRunAllProcessing && (
+        <ProgressBar 
+          variant='primary' 
+          animated 
+          now={progress} 
+          min={0} 
+          max={100} 
+          label={`${progress}%`} 
+          className='mb-3'
+        />)}
 
     <SitesTable  sites={siteList} trigger={tableTrigger}  singleSiteRun={runASite}  setSelectedSites={setSelectedSitesList} selectedSites={selectedSitesList}/>
 

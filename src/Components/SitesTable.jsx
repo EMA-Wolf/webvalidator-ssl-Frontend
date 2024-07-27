@@ -1,6 +1,5 @@
 import {React, useEffect, useState} from 'react'
 import Table from 'react-bootstrap/Table';
-import DelBtn from '../assets/DelBtn.png'
 import Button from 'react-bootstrap/Button';
 import { Spinner } from 'react-bootstrap';
 const SitesTable = ({sites, deleteFunction, trigger, singleSiteRun, selectedSites, setSelectedSites}) => {

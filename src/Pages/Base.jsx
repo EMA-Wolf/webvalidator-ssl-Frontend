@@ -3,7 +3,8 @@ import SideBar from '../Components/SideBar'
 import { Navigate, Outlet} from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
 import axios from 'axios'
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
+
 const Base = () => {
   const [delTrigger ,setDelTrigger] = useState(false)
   const [deletedSiteList, setDeletedSiteList] = useState([])
@@ -14,6 +15,7 @@ const delSwicth = (names) =>{
   setDeletedSiteList(names)
   setDelTrigger(!delTrigger)
 }
+
 
 const confrimDeletion = () =>{
   setIsProcessing(true)
@@ -72,7 +74,7 @@ const cancelDeletion = () =>{
     </div>
 </>}
 
-    {/* <ToastContainer position='top-center' theme='dark' className='w-50'/> */}
+
     </div>
   )
 }

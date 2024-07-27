@@ -9,6 +9,7 @@ import { ToastContainer } from 'react-toastify'
 import SslGeneratorPage from './Pages/SslGeneratorPage'
 import DomainLookupPage from './Pages/DomainLookupPage'
 import ProfilePage from './Pages/ProfilePage'
+import VunlerabilityScanPage from './Pages/VunlerabilityScanPage'
 const Apps = () => {
   return (
     <>
@@ -26,6 +27,7 @@ const Apps = () => {
                    <Route path='/sslgenerator' element={<SslGeneratorPage/>}></Route>
                    <Route path='/domainLookup' element={<DomainLookupPage/>}></Route>
                    <Route path='/profile' element={<ProfilePage/>}></Route>
+                   <Route path='/vunlerabilityScan' element={<VunlerabilityScanPage/>}></Route>
                 </Route>
 
             </Routes>
