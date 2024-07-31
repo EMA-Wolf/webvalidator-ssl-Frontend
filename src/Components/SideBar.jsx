@@ -40,9 +40,9 @@ const SideBar = () => {
                     <div className='d-flex align-items-center gap-2'><IoSearch /> <span>Domian Lookup</span></div>
                 </NavLink>
 
-                <NavLink to="/vunlerabilityScan" className='p-3 border w-100 rounded'>
-                    <div className='d-flex align-items-center gap-2'><IoSearch /> <span>Vunlerability Scan</span></div>
-                </NavLink>
+                {/* <NavLink to="/vunlerabilityScan" className='p-3 border w-100 rounded'>
+                    <div className='d-flex align-items-center gap-2'><IoSearch /> <span>Vulnerability Scan</span></div>
+                </NavLink> */}
 
                 </Nav>
            

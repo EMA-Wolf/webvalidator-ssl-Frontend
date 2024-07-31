@@ -9,7 +9,7 @@ import Form from 'react-bootstrap/Form';
 import dayjs from 'dayjs';
 import DragDropFiles from '../Components/DragDropFiles';
 import SitesTable from '../Components/SitesTable';
-import  Alert  from 'react-bootstrap/Alert';
+import Alert from 'react-bootstrap/Alert';
 import { toast } from 'react-toastify';
 import axios from "axios"
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -23,18 +23,18 @@ dayjs.extend(updateLocale);
 
 const SiteCheckerPage = () => {
   const [User, setUser] = useState({
-    id:"",
-    email:'',
-    username:"",
-    sites:[]
+    id: "",
+    email: '',
+    username: "",
+    sites: []
   })
-  
-  const {delPopUp} = useOutletContext()
+
+  const { delPopUp } = useOutletContext()
   const [lastRun, setLastRun] = useState('');
   const [toggle, setToggle] = useState(false)
   const [urltrigger, setUrltigger] = useState(false)
   const [siteList, setSiteList] = useState([])
-  const [singleSite, setSingleSite] = useState({name:""})
+  const [singleSite, setSingleSite] = useState({ name: "" })
   const [isSingleProcessing, setIsSingleProcessing] = useState(false)
   const [isRunAllProcessing, setIsRunAllProcessing] = useState(false)
   const [errorMessages, setErrorMessages] = useState([])
@@ -48,46 +48,52 @@ const SiteCheckerPage = () => {
 
   const addSingleSite = () => {
     const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/\S*)?$/;
-  
+
+    let domain = singleSite.name.trim();
+    
+    // Sanitize the input to remove http://, https://, www., and trailing slashes
+    domain = domain.replace(/^(https?:\/\/)?(www\.)?/, '').replace(/\/$/, '');
+
     if (singleSite.name.trim() !== "" && urlRegex.test(singleSite.name.trim())) {
       setIsSingleProcessing(true)
 
-    // Retrieve the User object from localStorage
-    const user = JSON.parse(localStorage.getItem('User'));
+      // Retrieve the User object from localStorage
+      const user = JSON.parse(localStorage.getItem('User'));
 
-    axios.post(`https://webvalidator-ssl-backend.onrender.com/api/sites/getsiteinfo`, {_id:user._id, name:singleSite.name,username:user.username}).then(res=>{
-      if(res.data.resultsResponse === null){
-        // setErrorMessages(res.data.error)
-        setIsSingleProcessing(false)
-        console.log(res.data.error)
+      axios.post(`https://webvalidator-ssl-backend.onrender.com/api/sites/getsiteinfo`, { _id: user._id, name: domain, username: user.username }).then(res => {
+        if (res.data.resultsResponse === null) {
+          setErrorMessages(res.data.error)
+          toast.error(res.data.error[0].status)
+          setIsSingleProcessing(false)
 
-        
-        toast.error(res.data.error[singleSite.name].status!==""?res.data.error[singleSite.name].status:"Unable to find site")
-        setSingleSite({ name: "" });
-        // setToastTrigger(!toastTrigger)
 
-        // setTimeout(()=>{
-        //   setToastTrigger(!toastTrigger)
-        // },3000)
 
-      }else{
+          toast.error(res.data.error[singleSite.name].status !== "" ? res.data.error[singleSite.name].status : "Unable to find site")
+          setSingleSite({ name: "" });
+          // setToastTrigger(!toastTrigger)
 
-        user.sites= [...res.data.resultsResponse]
+          // setTimeout(()=>{
+          //   setToastTrigger(!toastTrigger)
+          // },3000)
 
-        // Save the updated User object back to localStorage
-         localStorage.setItem('User', JSON.stringify(user));
-         console.log('Updated User:', user);
-         setIsSingleProcessing(false)
-         setSingleSite({ name: "" });
-         window.location.reload();
-      }
+        } else {
 
-      // user.sites= [...res.data.resultsResponse]
-  
-    }).catch(err=>{
-      console.log(err)
-      setIsSingleProcessing(false);
-    })
+          user.sites = [...res.data.resultsResponse]
+
+          // Save the updated User object back to localStorage
+          localStorage.setItem('User', JSON.stringify(user));
+          console.log('Updated User:', user);
+          setIsSingleProcessing(false)
+          setSingleSite({ name: "" });
+          window.location.reload();
+        }
+
+        // user.sites= [...res.data.resultsResponse]
+
+      }).catch(err => {
+        console.log(err)
+        setIsSingleProcessing(false);
+      })
 
       // setSiteList([...siteList, singleSite]);
       // Clear the input field
@@ -104,7 +110,7 @@ const SiteCheckerPage = () => {
     // Load details and last run time from local storage if available
     const savedLastRun = localStorage.getItem('lastRunTime');
 
-        const savedUser = localStorage.getItem('User');
+    const savedUser = localStorage.getItem('User');
 
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);
@@ -158,45 +164,45 @@ const SiteCheckerPage = () => {
     }
   };
 
-  
-  const runASite = (name) =>{
+
+  const runASite = (name) => {
     setTableTrigger(name)
 
     const user = JSON.parse(localStorage.getItem('User'));
 
-    axios.post("https://webvalidator-ssl-backend.onrender.com/api/sites/getsiteinfo",{_id:user._id,name}).then(res=>{
+    axios.post("https://webvalidator-ssl-backend.onrender.com/api/sites/getsiteinfo", { _id: user._id, name }).then(res => {
 
-      if(res.data.resultsResponse===null){
-        toast.error(`${res.data.error[name].status}`)
+      if (res.data.resultsResponse === null) {
+        toast.error(`${res.data.error[0].status}`)
       }
-      
-      user.sites= [...res.data.resultsResponse]
+
+      user.sites = [...res.data.resultsResponse]
 
       // Save the updated User object back to localStorage
-       localStorage.setItem('User', JSON.stringify(user));
-       setTableTrigger(null)
-       toast.success(`Done checking site: ${name}`)
-    }).catch(err=>{
+      localStorage.setItem('User', JSON.stringify(user));
+      setTableTrigger(null)
+      toast.success(`Done checking site: ${name}`)
+    }).catch(err => {
       console.log(err)
       setTableTrigger(null)
     })
 
-}
+  }
 
   const runAllChecks = () => {
     setIsRunAllProcessing(true)
     setProgress(0);
     // Retrieve the User object from localStorage
     const user = JSON.parse(localStorage.getItem('User'));
-  
+
     if (user) {
       // Update the User.sites with siteList
       user.sites = siteList;
 
       const pollProgress = () => {
-        axios.get(`${import.meta.env.VITE_LOCAL_BACKEND_URL}/api/sites/progress/${user.username}`)
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/sites/progress/${user.username}`)
           .then(res => {
-            setProgress(res.data.progress===100?0:res.data.progress);
+            setProgress(res.data.progress === 100 ? 0 : res.data.progress);
             if (res.data.progress <= 100) {
               setTimeout(pollProgress, 1000); // Poll every second
             } else {
@@ -210,17 +216,16 @@ const SiteCheckerPage = () => {
       };
 
       pollProgress();
-        
-      axios.post(`${import.meta.env.VITE_LOCAL_BACKEND_URL}/api/sites/getallsitesinfo`, user)
-        .then(res => {
 
+      axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/sites/getallsitesinfo`, user)
+        .then(res => {
           // On success, update the User.sites array with the new data from the response
           user.sites = res.data.success;
-  
+
           // Save the updated User object back to localStorage
           localStorage.setItem('User', JSON.stringify(user));
           setErrorMessages(res.data.errors)
-  
+
           setIsRunAllProcessing(false); // Reset loading state
 
           const currentTime = new Date().toISOString();
@@ -228,7 +233,7 @@ const SiteCheckerPage = () => {
           localStorage.setItem('lastRunTime', currentTime);
 
           window.location.reload();
-        
+
 
         })
         .catch(err => {
@@ -241,7 +246,7 @@ const SiteCheckerPage = () => {
     }
   };
 
-  
+
 
   const handleDelete = () => {
     // console.log("Selected sites for deletion:", selectedSitesList);
@@ -249,48 +254,51 @@ const SiteCheckerPage = () => {
     // Perform the delete operation or any other actions with the selected sites
   };
 
-  
   return (
-    <div className='w-100 vh-100 ps-4 pe-4' style={{overflowY:"scroll"}}>
+    <div className='w-100 vh-100 ps-4 pe-4' style={{ overflowY: "scroll" }}>
 
       {/* NavBar area */}
 
-    
+
       <Navbar className='d-flex justify-content-between pb-0 border-bottom' id='navbar'>
         {/*Greetings*/}
         <div>
-          <h3>{getGreeting()}, <span style={{color:"#3CA1FF"}}>{User.username}</span></h3>
+          <h3>{getGreeting()}, <span style={{ color: "#3CA1FF" }}>{User.username}</span></h3>
           <p style={{ color: "grey" }}>Welcome to Site Checker</p>
         </div>
 
         {/* Controls */}
         <div className='d-flex gap-5 align-items-center'>
-          <Button onClick={runAllChecks} style={{ padding: "1rem" }} className='d-flex align-items-center gap-2' disabled={isRunAllProcessing}> 
-          {isRunAllProcessing ? <Spinner animation="border" /> : <> <FaPlay /> <span>Run all</span></>}
+          <Button onClick={runAllChecks} style={{ padding: "1rem" }} className='d-flex align-items-center gap-2' disabled={isRunAllProcessing}>
+            {isRunAllProcessing ? <Spinner animation="border" /> : <> <FaPlay /> <span>Run all</span></>}
           </Button>
 
-        <Dropdown>
-                  <Dropdown.Toggle variant='none' id="dropdown-basic" className='d-flex align-items-center'>
-                      <div className='d-flex align-items-center'>
-                          <IoIosNotifications style={{fontSize:"2rem", color:"white"}}/>
-                            <span style={{color:"red"}}>{errorMessages.length}</span>
-                      </div>
-                  </Dropdown.Toggle>
+          <Dropdown data-bs-theme="dark" >
+            
+            <Dropdown.Toggle variant='none' id="dropdown-button-dark-example1" className='d-flex align-items-center'>
+              <div className='d-flex align-items-center'>
+                <IoIosNotifications style={{ fontSize: "2rem", color: "white" }} />
+                <span style={{ color: "red" }}>{errorMessages.length}</span>
+              </div>
+            </Dropdown.Toggle>
 
-             {errorMessages>0 && <Dropdown.Menu>
-                    {errorMessages.map(errorMessage =>
-                    <>
-                    <Dropdown.Item key={errorMessage}>
-                        {`${errorMessage.name}: ${errorMessage.status}`}
-                    </Dropdown.Item>
-                    </>)}
-              </Dropdown.Menu>}
-                  
-        </Dropdown>
+            {errorMessages.length>0 && 
+            
+            <Dropdown.Menu>
+              {errorMessages.map((errorMessage,index) =>
+                  <Dropdown.Item key={index} className='text-wrap p-0 ps-1 text-white' disabled={true}>
+                    {`${index+1}.${errorMessage.status}`}
+                  </Dropdown.Item>
+               )
+                }
+            </Dropdown.Menu>
+            }
+
+          </Dropdown>
 
           {/* Account icon */}
           <Link to="/profile">
-          <div className='pt-0 p-1 rounded border ' style={{ backgroundColor: "#242627", fontSize: "1.2rem" }}><IoPerson /></div>
+            <div className='pt-0 p-1 rounded border ' style={{ backgroundColor: "#242627", fontSize: "1.2rem" }}><IoPerson /></div>
           </Link>
         </div>
       </Navbar>
@@ -307,18 +315,18 @@ const SiteCheckerPage = () => {
 
 
           <div>
-            <Form.Control placeholder="Example.com" value={singleSite.name} onChange={e => setSingleSite({...singleSite, name:e.target.value})} className='p-3' style={{ backgroundColor: "#605C5C", color: "white", border: "none" }} />
+            <Form.Control placeholder="Example.com" value={singleSite.name} onChange={e => setSingleSite({ ...singleSite, name: e.target.value })} className='p-3' style={{ backgroundColor: "#605C5C", color: "white", border: "none" }} />
 
-               {urltrigger&&<Alert variant='danger' style={{background:"transparent", border:"none",  padding:"0rem", margin:"0rem"}}>Plesae enter a valid URL</Alert>}
+            {urltrigger && <Alert variant='danger' style={{ background: "transparent", border: "none", padding: "0rem", margin: "0rem" }}>Plesae enter a valid URL</Alert>}
           </div>
 
           <div className='d-flex justify-content-between'>
             <label onClick={toggleFileUpload} style={{ color: "#3CA1FF", textDecoration: "underline", cursor: "pointer" }}>or You can drag and drop here</label>
 
-            <Button onClick={addSingleSite} disabled={isSingleProcessing}>{isSingleProcessing ? <Spinner animation="border" />: "Run and List"}</Button>
+            <Button onClick={addSingleSite} disabled={isSingleProcessing}>{isSingleProcessing ? <Spinner animation="border" /> : "Run and List"}</Button>
           </div>
 
-   
+
         </div>
 
 
@@ -334,21 +342,21 @@ const SiteCheckerPage = () => {
 
 
       <div className='d-flex justify-content-end pe-3 mb-3'>
-      <Button variant='danger' onClick={handleDelete} disabled={selectedSitesList.length === 0}>Delete</Button>
+        <Button variant='danger' onClick={handleDelete} disabled={selectedSitesList.length === 0}>Delete</Button>
       </div>
 
       {isRunAllProcessing && (
-        <ProgressBar 
-          variant='primary' 
-          animated 
-          now={progress} 
-          min={0} 
-          max={100} 
-          label={`${progress}%`} 
+        <ProgressBar
+          variant='primary'
+          animated
+          now={progress}
+          min={0}
+          max={100}
+          label={`${progress}%`}
           className='mb-3'
         />)}
 
-    <SitesTable  sites={siteList} trigger={tableTrigger}  singleSiteRun={runASite}  setSelectedSites={setSelectedSitesList} selectedSites={selectedSitesList}/>
+      <SitesTable sites={siteList} trigger={tableTrigger} singleSiteRun={runASite} setSelectedSites={setSelectedSitesList} selectedSites={selectedSitesList} />
 
 
     </div>
