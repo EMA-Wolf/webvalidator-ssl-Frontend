@@ -10,6 +10,7 @@ import SslGeneratorPage from './Pages/SslGeneratorPage'
 import DomainLookupPage from './Pages/DomainLookupPage'
 import ProfilePage from './Pages/ProfilePage'
 import VunlerabilityScanPage from './Pages/VunlerabilityScanPage'
+import ForgottenPasswordForm from './Components/ForgottenPasswordForm'
 const Apps = () => {
   return (
     <>
@@ -19,6 +20,7 @@ const Apps = () => {
                 <Route path='' element={<LoginPage/>}>
                   <Route path='/' element={<LoginForm/>}></Route>
                   <Route path='/Signup' element={<SignUpForm/>}></Route>
+                  <Route path='/Reset-password' element={<ForgottenPasswordForm/>}></Route>
                 </Route>
 
           {/* Homepage and others */}

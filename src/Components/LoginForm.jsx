@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button"
 import Form from "react-bootstrap/Form"
 import { Spinner } from 'react-bootstrap'
 import axios from "axios"
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 const LoginForm = () => {
@@ -48,6 +48,10 @@ const LoginForm = () => {
         
               <Button disabled={loading} variant="primary" type="submit" className='w-100 mt-2' style={{padding:"0.9rem"}}>{loading?<Spinner animation="border"/>:`Login`}</Button>
             </Form>
+
+           
+              <Link className='text-primary' to='/Reset-password'>Forgotten your password?</Link>
+
     </div>
   )
 }

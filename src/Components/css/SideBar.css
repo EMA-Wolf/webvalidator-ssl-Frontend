@@ -13,3 +13,28 @@
 #sidebar .header{
     border-color:grey !important;
 }
+
+.accordion-button, .accordion-body{
+    background-color: #242627 !important;
+    color: white ;
+  }
+  
+  .accordion-button:focus {
+    box-shadow: none;
+  }
+  
+  .accordion-button:not(.collapsed) {
+    color: white;
+  }
+
+  .modal-content{
+    background-color: #242627 !important;
+  }
+
+  .modal-header, .modal-footer{
+    border-top: #242627;
+  }
+
+  .btn-close{
+    --bs-btn-close-color: white !important;
+  }

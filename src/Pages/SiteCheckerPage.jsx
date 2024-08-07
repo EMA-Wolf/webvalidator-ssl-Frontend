@@ -2,6 +2,7 @@ import { useState, useEffect, React } from 'react'
 import { FaPlay } from "react-icons/fa";
 import { IoPerson } from "react-icons/io5";
 import { IoIosNotifications } from "react-icons/io";
+import { MdOutlineScheduleSend } from "react-icons/md";
 // import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
@@ -16,6 +17,9 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import { useOutletContext, Link } from 'react-router-dom';
 import { Spinner, Dropdown, ProgressBar } from 'react-bootstrap';
+import SchedulePopUp from '../Components/SchedulePopUp';
+
+
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -29,7 +33,7 @@ const SiteCheckerPage = () => {
     sites: []
   })
 
-  const { delPopUp } = useOutletContext()
+  const { delPopUp, schedulingPopUp} = useOutletContext()
   const [lastRun, setLastRun] = useState('');
   const [toggle, setToggle] = useState(false)
   const [urltrigger, setUrltigger] = useState(false)
@@ -39,7 +43,12 @@ const SiteCheckerPage = () => {
   const [isRunAllProcessing, setIsRunAllProcessing] = useState(false)
   const [errorMessages, setErrorMessages] = useState([])
   const [tableTrigger, setTableTrigger] = useState(null)
+
+  const [schedulingTrigger, setSchedulingTrigger] = useState(false)
   const [selectedSitesList, setSelectedSitesList] = useState([])
+  
+  const [selectedScheduledSitesList, setScheduledSelectedSitesList] = useState([])
+
   const [progress, setProgress] = useState(0);
 
   const toggleFileUpload = () => {
@@ -246,6 +255,27 @@ const SiteCheckerPage = () => {
     }
   };
 
+ 
+  const schedulingSwitch = () => {
+  setSchedulingTrigger(!schedulingTrigger)
+  }
+
+  const submitScheduling = () => {
+    // TODO: Implement scheduling logic
+    // Prompt the user to input the desired schedule time and frequency
+    // Schedule the runAllChecks function at the specified time and frequency
+    // You can use a library like 'node-schedule' or a cron job scheduler to achieve this
+    console.log("Scheduling a run at the desired time and frequency");
+    // setSchedulingTrigger(false); // Reset the scheduling form
+
+  }
+
+  const cancelScheduling = () => {
+    // Cancel the scheduled runAllChecks function
+    setScheduledSelectedSitesList([])
+    // setSchedulingTrigger(false); // Reset the scheduling form
+  }
+
 
 
   const handleDelete = () => {
@@ -254,8 +284,12 @@ const SiteCheckerPage = () => {
     // Perform the delete operation or any other actions with the selected sites
   };
 
+  const handleScheduling = () => {
+    schedulingPopUp(selectedSitesList)
+  }
+
   return (
-    <div className='w-100 vh-100 ps-4 pe-4' style={{ overflowY: "scroll" }}>
+    <div className='w-100 vh-100 ps-4 pe-4' style={{ overflowY: "scroll"}}>
 
       {/* NavBar area */}
 
@@ -272,6 +306,11 @@ const SiteCheckerPage = () => {
           <Button onClick={runAllChecks} style={{ padding: "1rem" }} className='d-flex align-items-center gap-2' disabled={isRunAllProcessing}>
             {isRunAllProcessing ? <Spinner animation="border" /> : <> <FaPlay /> <span>Run all</span></>}
           </Button>
+
+          {/* <Button onClick={schedulingSwitch} style={{ padding: "1rem" }} className='d-flex align-items-center gap-2' disabled={isRunAllProcessing}>
+            {isRunAllProcessing ? <Spinner animation="border" /> : <> <MdOutlineScheduleSend style={{fontSize:"1.4rem"}}/>
+              <span>Schedule a Run</span></>}
+          </Button> */}
 
           <Dropdown data-bs-theme="dark" >
             
@@ -341,7 +380,13 @@ const SiteCheckerPage = () => {
       </div>
 
 
-      <div className='d-flex justify-content-end pe-3 mb-3'>
+      <div className='d-flex justify-content-end pe-3 mb-3 gap-3'>
+
+        <Button variant='primary' onClick={handleScheduling} disabled={selectedSitesList.length === 0}>
+          <MdOutlineScheduleSend style={{fontSize:"1.4rem"}}/>
+        <span>Schedule a Run</span>
+        </Button>
+
         <Button variant='danger' onClick={handleDelete} disabled={selectedSitesList.length === 0}>Delete</Button>
       </div>
 
@@ -358,7 +403,16 @@ const SiteCheckerPage = () => {
 
       <SitesTable sites={siteList} trigger={tableTrigger} singleSiteRun={runASite} setSelectedSites={setSelectedSitesList} selectedSites={selectedSitesList} />
 
+      {/* {schedulingTrigger&&
 
+      <SchedulePopUp 
+      trigger={schedulingSwitch} 
+      sites={User.sites} 
+      selectedSites={selectedScheduledSitesList} 
+      setSelectedSites={setScheduledSelectedSitesList}
+      submit={submitScheduling}
+      cancel={cancelScheduling}
+      />} */}
     </div>
   )
 }
