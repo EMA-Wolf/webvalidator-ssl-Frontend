@@ -1,18 +1,17 @@
 import React from 'react'
-import { Alert } from 'react-bootstrap'
 
-const DisplaySSLCert = ({cert}) => {
+const DisplaySSLCert = ({ cert }) => {
   return (
-    <div style={{ backgroundColor: "#242627",overflowY:"scroll" }} className='p-4 w-50 rounded'>
-          {cert && (
-                    <Alert variant='success' className='mt-3'>
-                        <h5>Certificate Generated Successfully</h5>
-                        <p>Private Key:</p>
-                        <pre>{cert.privateKey}</pre>
-                        <p>Certificate:</p>
-                        <pre>{cert.certificate}</pre>
-                    </Alert>
-                )}
+    <div className="bg-gray-800 p-4 w-1/2 rounded overflow-y-scroll">
+      {cert && (
+        <div className="mt-3 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+          <h5 className="font-bold">Certificate Generated Successfully</h5>
+          <p>Private Key:</p>
+          <pre className="bg-gray-100 p-2 rounded">{cert.privateKey}</pre>
+          <p>Certificate:</p>
+          <pre className="bg-gray-100 p-2 rounded">{cert.certificate}</pre>
+        </div>
+      )}
     </div>
   )
 }

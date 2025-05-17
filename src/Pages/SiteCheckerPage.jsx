@@ -1,23 +1,25 @@
-import { useState, useEffect, React } from 'react'
+import { useState, useEffect } from 'react'
+import React from 'react'
 import { FaPlay } from "react-icons/fa";
 import { IoPerson } from "react-icons/io5";
 import { IoIosNotifications } from "react-icons/io";
 import { MdOutlineScheduleSend } from "react-icons/md";
 // import Container from 'react-bootstrap/Container';
-import Navbar from 'react-bootstrap/Navbar';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+// import Navbar from 'react-bootstrap/Navbar';
+// import Button from 'react-bootstrap/Button';
+// import Form from 'react-bootstrap/Form';
 import dayjs from 'dayjs';
 import DragDropFiles from '../Components/DragDropFiles';
 import SitesTable from '../Components/SitesTable';
-import Alert from 'react-bootstrap/Alert';
+// import Alert from 'react-bootstrap/Alert';
 import { toast } from 'react-toastify';
-import axios from "axios"
+import { Spin,Progress } from 'antd';
+import api from '../services/api'
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import { useOutletContext, Link } from 'react-router-dom';
-import { Spinner, Dropdown, ProgressBar } from 'react-bootstrap';
-import SchedulePopUp from '../Components/SchedulePopUp';
+// import { Spinner, Dropdown, ProgressBar } from 'react-bootstrap';
+// import SchedulePopUp from '../Components/SchedulePopUp';
 
 
 
@@ -33,7 +35,7 @@ const SiteCheckerPage = () => {
     sites: []
   })
 
-  const { delPopUp, schedulingPopUp} = useOutletContext()
+  const { delPopUp, schedulingPopUp } = useOutletContext()
   const [lastRun, setLastRun] = useState('');
   const [toggle, setToggle] = useState(false)
   const [urltrigger, setUrltigger] = useState(false)
@@ -46,7 +48,7 @@ const SiteCheckerPage = () => {
 
   const [schedulingTrigger, setSchedulingTrigger] = useState(false)
   const [selectedSitesList, setSelectedSitesList] = useState([])
-  
+
   const [selectedScheduledSitesList, setScheduledSelectedSitesList] = useState([])
 
   const [progress, setProgress] = useState(0);
@@ -59,7 +61,7 @@ const SiteCheckerPage = () => {
     const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/\S*)?$/;
 
     let domain = singleSite.name.trim();
-    
+
     // Sanitize the input to remove http://, https://, www., and trailing slashes
     domain = domain.replace(/^(https?:\/\/)?(www\.)?/, '').replace(/\/$/, '');
 
@@ -69,7 +71,7 @@ const SiteCheckerPage = () => {
       // Retrieve the User object from localStorage
       const user = JSON.parse(localStorage.getItem('User'));
 
-      axios.post(`https://webvalidator-ssl-backend.onrender.com/api/sites/getsiteinfo`, { _id: user._id, name: domain, username: user.username }).then(res => {
+      api.post("/sites/getsiteinfo", { _id: user._id, name: domain, username: user.username }).then(res => {
         if (res.data.resultsResponse === null) {
           setErrorMessages(res.data.error)
           toast.error(res.data.error[0].status)
@@ -179,7 +181,7 @@ const SiteCheckerPage = () => {
 
     const user = JSON.parse(localStorage.getItem('User'));
 
-    axios.post("https://webvalidator-ssl-backend.onrender.com/api/sites/getsiteinfo", { _id: user._id, name }).then(res => {
+    api.post("/sites/getsiteinfo", { _id: user._id, name }).then(res => {
 
       if (res.data.resultsResponse === null) {
         toast.error(`${res.data.error[0].status}`)
@@ -209,7 +211,7 @@ const SiteCheckerPage = () => {
       user.sites = siteList;
 
       const pollProgress = () => {
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/sites/progress/${user.username}`)
+        api.get(`/sites/progress/${user.username}`)
           .then(res => {
             setProgress(res.data.progress === 100 ? 0 : res.data.progress);
             if (res.data.progress <= 100) {
@@ -226,7 +228,7 @@ const SiteCheckerPage = () => {
 
       pollProgress();
 
-      axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/sites/getallsitesinfo`, user)
+      api.post("/sites/getallsitesinfo", user)
         .then(res => {
           // On success, update the User.sites array with the new data from the response
           user.sites = res.data.success;
@@ -255,9 +257,9 @@ const SiteCheckerPage = () => {
     }
   };
 
- 
+
   const schedulingSwitch = () => {
-  setSchedulingTrigger(!schedulingTrigger)
+    setSchedulingTrigger(!schedulingTrigger)
   }
 
   const submitScheduling = () => {
@@ -289,80 +291,51 @@ const SiteCheckerPage = () => {
   }
 
   return (
-    <div className='w-100 vh-100 ps-4 pe-4' style={{ overflowY: "scroll"}}>
-
-      {/* NavBar area */}
-
-
-      <Navbar className='d-flex justify-content-between pb-0 border-bottom' id='navbar'>
-        {/*Greetings*/}
+    <div className='w-full h-screen overflow-y-scroll p-4'>
+      
+      {/* Header */}
+      <div className='flex justify-between pb-4 border-b' id='navbar'>
         <div>
-          <h3>{getGreeting()}, <span style={{ color: "#3CA1FF" }}>{User.username}</span></h3>
-          <p style={{ color: "grey" }}>Welcome to Site Checker</p>
+          <h3 className='text-2xl font-semibold'>{getGreeting()}, <span className="text-blue-500">{User.username}</span></h3>
+          <p className="text-gray-500">Welcome to Site Guard Pro</p>
         </div>
-
-        {/* Controls */}
-        <div className='d-flex gap-5 align-items-center'>
-          <Button onClick={runAllChecks} style={{ padding: "1rem" }} className='d-flex align-items-center gap-2' disabled={isRunAllProcessing}>
-            {isRunAllProcessing ? <Spinner animation="border" /> : <> <FaPlay /> <span>Run all</span></>}
-          </Button>
+        <div className='flex gap-5 items-center'>
+          <button onClick={runAllChecks} className='flex items-center gap-2 p-4 bg-blue-500 text-white rounded' disabled={isRunAllProcessing}>
+            {isRunAllProcessing ? <Spin /> : <> <FaPlay /> <span>Run all</span></>}
+          </button>
 
           {/* <Button onClick={schedulingSwitch} style={{ padding: "1rem" }} className='d-flex align-items-center gap-2' disabled={isRunAllProcessing}>
             {isRunAllProcessing ? <Spinner animation="border" /> : <> <MdOutlineScheduleSend style={{fontSize:"1.4rem"}}/>
               <span>Schedule a Run</span></>}
           </Button> */}
 
-          <Dropdown data-bs-theme="dark" >
-            
-            <Dropdown.Toggle variant='none' id="dropdown-button-dark-example1" className='d-flex align-items-center'>
-              <div className='d-flex align-items-center'>
-                <IoIosNotifications style={{ fontSize: "2rem", color: "white" }} />
-                <span style={{ color: "red" }}>{errorMessages.length}</span>
-              </div>
-            </Dropdown.Toggle>
-
-            {errorMessages.length>0 && 
-            
-            <Dropdown.Menu>
-              {errorMessages.map((errorMessage,index) =>
-                  <Dropdown.Item key={index} className='text-wrap p-0 ps-1 text-white' disabled={true}>
-                    {`${index+1}.${errorMessage.status}`}
-                  </Dropdown.Item>
-               )
-                }
-            </Dropdown.Menu>
-            }
-
-          </Dropdown>
+          <div className='flex items-center'>
+            <IoIosNotifications className="text-2xl text-white" />
+            <span className="text-red-500">{errorMessages.length}</span>
+          </div>
 
           {/* Account icon */}
           <Link to="/profile">
-            <div className='pt-0 p-1 rounded border ' style={{ backgroundColor: "#242627", fontSize: "1.2rem" }}><IoPerson /></div>
+            <div className='p-2 rounded border bg-gray-800 text-xl'><IoPerson /></div>
           </Link>
         </div>
-      </Navbar>
+      </div>
 
-
-      {/* Input area */}
-
-      <div className=' position-relative mt-3' style={{ zIndex: 1 }}>
-
-        <div className='d-flex flex-column gap-4 p-4 rounded border' id='inputfield' style={{ backgroundColor: "#242627" }}>
-
+{/* Drag and Drop Area */}
+      <div className='relative mt-3 z-10'>
+        <div className='flex flex-col gap-4 p-4 rounded border bg-gray-800'>
           <h4>Check your website</h4>
 
+          <div className='w-full'>
+            <input placeholder="Example.com" value={singleSite.name} onChange={e => setSingleSite({ ...singleSite, name: e.target.value })} className='p-3 bg-gray-700 text-white border-none rounded w-full' />
 
-
-          <div>
-            <Form.Control placeholder="Example.com" value={singleSite.name} onChange={e => setSingleSite({ ...singleSite, name: e.target.value })} className='p-3' style={{ backgroundColor: "#605C5C", color: "white", border: "none" }} />
-
-            {urltrigger && <Alert variant='danger' style={{ background: "transparent", border: "none", padding: "0rem", margin: "0rem" }}>Plesae enter a valid URL</Alert>}
+            {urltrigger && <p className="text-red-500">Please enter a valid URL</p>}
           </div>
 
-          <div className='d-flex justify-content-between'>
-            <label onClick={toggleFileUpload} style={{ color: "#3CA1FF", textDecoration: "underline", cursor: "pointer" }}>or You can drag and drop here</label>
+          <div className='flex justify-between items-center'>
+            <label onClick={toggleFileUpload} className="text-blue-500 underline cursor-pointer">or You can drag and drop here</label>
 
-            <Button onClick={addSingleSite} disabled={isSingleProcessing}>{isSingleProcessing ? <Spinner animation="border" /> : "Run and List"}</Button>
+            <button onClick={addSingleSite} disabled={isSingleProcessing} className="bg-green-500 text-white px-4 py-2 rounded">{isSingleProcessing ? <Spin />  : "Run and List"}</button>
           </div>
 
 
@@ -374,32 +347,36 @@ const SiteCheckerPage = () => {
         {/* <DragDropFiles toggle={toggleFileUpload}/> */}
       </div>
 
-
-      <div className='d-flex justify-content-end pe-3 mt-3'>
+      {/* Last Run Time */}
+      <div className='flex justify-end pe-3 mt-3 pb-4'>
         <p>{lastRun ? getLastRunTime(lastRun) : 'Last Run: Never'}</p>
       </div>
 
 
-      <div className='d-flex justify-content-end pe-3 mb-3 gap-3'>
+      <div className='flex justify-end pe-3 mb-3 gap-3'>
 
-        <Button variant='primary' onClick={handleScheduling} disabled={selectedSitesList.length === 0}>
-          <MdOutlineScheduleSend style={{fontSize:"1.4rem"}}/>
-        <span>Schedule a Run</span>
-        </Button>
+        <button onClick={handleScheduling} disabled={selectedSitesList.length === 0} className="bg-blue-500 text-white px-4 py-2 rounded flex justify-center items-center gap-2">
+          <MdOutlineScheduleSend className="text-xl" />
+          <span>Schedule a Run</span>
+        </button>
 
-        <Button variant='danger' onClick={handleDelete} disabled={selectedSitesList.length === 0}>Delete</Button>
+        <button onClick={handleDelete} disabled={selectedSitesList.length === 0} className="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
       </div>
 
+      {/* Progress Bar */}
       {isRunAllProcessing && (
-        <ProgressBar
-          variant='primary'
-          animated
-          now={progress}
-          min={0}
-          max={100}
-          label={`${progress}%`}
-          className='mb-3'
-        />)}
+        <div className="flex justify-between items-center mb-3">
+          <p className="text-gray-500">Running all checks...</p>
+          <Progress percent={progress} status="active" />
+        </div>
+      )}
+
+      {/* Progress Bar
+      {isRunAllProcessing && (
+        <div className="w-full bg-gray-700 rounded-full h-2.5">
+          <div className="bg-blue-500 h-2.5 rounded-full" style={{ width: `${progress}%` }}></div>
+        </div>
+      )} */}
 
       <SitesTable sites={siteList} trigger={tableTrigger} singleSiteRun={runASite} setSelectedSites={setSelectedSitesList} selectedSites={selectedSitesList} />
 

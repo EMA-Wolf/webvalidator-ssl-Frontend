@@ -1,38 +1,35 @@
 import React from 'react'
-import { Table } from 'react-bootstrap'
 
-const VunlerabilityTable = ({vList}) => {
+const VunlerabilityTable = ({ vList }) => {
   return (
-    <div className='w-100 mt-4 pe-5 ps-5'>  
-    
-    <div className='ps-5'>
-        <h1>Vulnerabilities Report</h1>
-        <p>This report outlines potential vulnerabilities in your application.</p>
-    </div>      
+    <div className="w-full mt-4 px-5">
+      <div className="pl-5">
+        <h1 className="text-2xl font-bold">Vulnerabilities Report</h1>
+        <p className="text-gray-600">This report outlines potential vulnerabilities in your application.</p>
+      </div>
 
-        {/* Add your table data here */}
-        <Table striped bordered hover variant="dark">
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-gray-800 text-white">
           <thead>
             <tr>
-              <th>No.</th>
-              <th>Type</th>
-              <th>Description</th>
-              <th>Solution</th>
+              <th className="px-4 py-2">No.</th>
+              <th className="px-4 py-2">Type</th>
+              <th className="px-4 py-2">Description</th>
+              <th className="px-4 py-2">Solution</th>
             </tr>
           </thead>
           <tbody>
-            {vList.map((vunlerability,index) =>(
-                <tr key={index}>
-                  <td>{index+1}</td>
-                  <td>{vunlerability.name}</td>
-                  <td>{vunlerability.description}</td>
-                  <td>{vunlerability.solution}</td>
-                </tr>
-  
+            {vList.map((vulnerability, index) => (
+              <tr key={index} className="border-t border-gray-700">
+                <td className="px-4 py-2">{index + 1}</td>
+                <td className="px-4 py-2">{vulnerability.name}</td>
+                <td className="px-4 py-2">{vulnerability.description}</td>
+                <td className="px-4 py-2">{vulnerability.solution}</td>
+              </tr>
             ))}
           </tbody>
-      </Table>
-
+        </table>
+      </div>
     </div>
   )
 }

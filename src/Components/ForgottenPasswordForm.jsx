@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { Form, Button, Spinner } from "react-bootstrap";
 import axios from 'axios';
+import api from '../services/api';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 const ForgottenPasswordForm = () => {
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
-    const [sent , setSent] = useState(false);
-    const navigate = useNavigate()
+    const [sent, setSent] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -21,7 +21,7 @@ const ForgottenPasswordForm = () => {
         }
 
         // Send email to backend to reset password
-        axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/request-password-reset`, { email }).then(res => {
+        api.post("/auth/request-password-reset", { email }).then(res => {
             if (res.data.message === 'Password reset link has been sent to your email') {
                 setLoading(false);
                 setSent(true);
@@ -38,32 +38,42 @@ const ForgottenPasswordForm = () => {
     };
 
     return (
-        <div>
-            <Form style={{ backgroundColor: "#242627" }} className='p-4 rounded' onSubmit={handleSubmit}>
-                {sent?<>
-                <p className="text-white mb-4">An email has been sent to {email}. Please check your inbox.</p>
-                <Button variant="primary" type="button" onClick={() => navigate("/")}>
-                    Return to Login
-                </Button>
-                </>
-                :<>
-                <h2 className="text-white mb-4">Forgot Password</h2>
-                <p className="text-center text-white">Enter your email address to reset your password.</p>
-                <Form.Group className="d-flex flex-column gap-2" controlId="formBasicEmail">
-                    <Form.Label>Email:</Form.Label>
-                    <Form.Control
-                        type="email"
-                        placeholder="Enter your email"
-                        style={{ padding: '1rem', backgroundColor: "#605C5C", border: "#605C5C", color: "white" }}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <Form.Text className="text-muted"></Form.Text>
-                    <Button variant="primary" type="submit" style={{ padding: "0.9rem" }}>{loading ? <Spinner animation="border" /> : `Send Reset Link`}</Button>
-                </Form.Group>
-                </>
-                }
-            </Form>
+        <div className="bg-gray-800 p-4 rounded">
+            <form onSubmit={handleSubmit} className="space-y-4">
+                {sent ? (
+                    <>
+                        <p className="text-white mb-4">An email has been sent to {email}. Please check your inbox.</p>
+                        <button
+                            type="button"
+                            onClick={() => navigate('/')}
+                            className="w-full py-3 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                            Return to Login
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <h2 className="text-white mb-4">Forgot Password</h2>
+                        <p className="text-center text-white">Enter your email address to reset your password.</p>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-white">Email:</label>
+                            <input
+                                type="email"
+                                placeholder="Enter your email"
+                                className="w-full p-3 bg-gray-700 border border-gray-700 text-white rounded"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                            <button
+                                type="submit"
+                                className="w-full py-3 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            >
+                                {loading ? <span className="spinner-border" /> : 'Send Reset Link'}
+                            </button>
+                        </div>
+                    </>
+                )}
+            </form>
         </div>
     );
 };

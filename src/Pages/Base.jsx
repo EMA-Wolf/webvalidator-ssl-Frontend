@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import SideBar from '../Components/SideBar'
 import { Navigate, Outlet } from 'react-router-dom'
-import Button from 'react-bootstrap/Button'
 import axios from 'axios'
+import api  from "../services/api"
 import { toast } from 'react-toastify';
 
 const Base = () => {
@@ -32,7 +32,7 @@ const Base = () => {
 
     const user = JSON.parse(localStorage.getItem('User'));
 
-    axios.post("https://webvalidator-ssl-backend.onrender.com/api/sites/deleteSites", { _id: user._id, sites: deletedSiteList, username: user.username })
+    api.post("/sites/deleteSites", { _id: user._id, sites: deletedSiteList, username: user.username })
       .then(res => {
         user.sites = [...res.data.resultsResponse]
 
@@ -47,16 +47,6 @@ const Base = () => {
       })
   }
 
-  // const confirmScheduling = () => {
-  //   const totalMinutes = parseInt(scheduleHours) * 60 + parseInt(scheduleMinutes);
-  //   if (totalMinutes >= 1) {
-  //     console.log(selectedScheduledSitesList, totalMinutes)
-  //     // Here, you can proceed with scheduling logic
-  //   } else {
-  //     toast.error('Schedule time should be at least 1 minute')
-  //   }
-  // }
-
   const confirmScheduling = () => {
     const totalMinutes = parseInt(scheduleHours) * 60 + parseInt(scheduleMinutes);
     if (totalMinutes >= 1) {
@@ -69,7 +59,7 @@ const Base = () => {
       };
       setIsProcessing(true);
 
-      axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/schedule/cron`, scheduleData)
+      api.post("/schedule/cron", scheduleData)
         .then(res => {
           setIsProcessing(false);
           setSchedulingTrigger(!schedulingTrigger);
@@ -83,7 +73,6 @@ const Base = () => {
       toast.error('Schedule time should be at least 1 minute');
     }
   }
-
 
   const cancelScheduling = () => {
     setSelectedScheduledSitesList([])
@@ -111,49 +100,68 @@ const Base = () => {
     }
   }
 
-
   return (
-    <div className='d-flex'>
-
+    <div className="flex">
       <SideBar />
 
       <Outlet context={{ delPopUp: delSwitch, schedulingPopUp: scheduleSwitch }} />
 
       {delTrigger &&
         <>
-          <div onClick={delSwitch} style={{ position: "absolute", top: "0rem", backgroundColor: "rgba(0, 0, 0, 0.4)", zIndex: 1, color: "white" }} className='h-100 w-100 d-flex justify-content-center align-items-center'>
-
-            <div style={{ backgroundColor: "#151718", zIndex: 2 }} className='w-50 p-5 rounded' onClick={(e) => e.stopPropagation()}>
+          <div
+            onClick={delSwitch}
+            className="fixed inset-0 bg-black bg-opacity-40 z-10 flex justify-center items-center text-white"
+          >
+            <div
+              className="bg-gray-900 z-20 w-1/2 p-5 rounded"
+              onClick={(e) => e.stopPropagation()}
+            >
               <h1>Oops😶‍🌫️</h1>
 
-              <p style={{ fontSize: "1.2rem" }}>{deletedSiteList.length === 1 ? `You sure you want to delete this site: ${deletedSiteList} ?` : `You sure you want to delete all  ${deletedSiteList.length} sites?`}</p>
+              <p className="text-lg">
+                {deletedSiteList.length === 1 ? `You sure you want to delete this site: ${deletedSiteList} ?` : `You sure you want to delete all  ${deletedSiteList.length} sites?`}
+              </p>
 
-              <div className='d-flex justify-content-end gap-3'>
-                <Button onClick={cancelDeletion} variant='danger'>No</Button>
-                <Button disabled={isProcessing} onClick={confirmDeletion} variant='success'>{isProcessing ? `Processing...` : `Yes`}</Button>
+              <div className="flex justify-end gap-3">
+                <button onClick={cancelDeletion} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                  No
+                </button>
+                <button
+                  disabled={isProcessing}
+                  onClick={confirmDeletion}
+                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                >
+                  {isProcessing ? 'Processing...' : 'Yes'}
+                </button>
               </div>
             </div>
-
           </div>
         </>}
 
       {schedulingTrigger &&
         <>
-          <div onClick={scheduleSwitch} style={{ position: "absolute", top: "0rem", backgroundColor: "rgba(0, 0, 0, 0.4)", zIndex: 1, color: "white" }} className='h-100 w-100 d-flex justify-content-center align-items-center'>
-
-            <div style={{ backgroundColor: "#151718", zIndex: 2 }} className='w-50 p-5 rounded' onClick={(e) => e.stopPropagation()}>
+          <div
+            onClick={scheduleSwitch}
+            className="fixed inset-0 bg-black bg-opacity-40 z-10 flex justify-center items-center text-white"
+          >
+            <div
+              className="bg-gray-900 z-20 w-1/2 p-5 rounded"
+              onClick={(e) => e.stopPropagation()}
+            >
               <h1>Set Schedule</h1>
 
-              <p style={{ fontSize: "1.2rem" }}>{selectedScheduledSitesList.length === 1 ? `Would you like to set a schedule run for: ${selectedScheduledSitesList} ?` : `Would you like to set a schedule run for  ${selectedScheduledSitesList.length} sites?`}</p>
+              <p className="text-lg">
+                {selectedScheduledSitesList.length === 1 ? `Would you like to set a schedule run for: ${selectedScheduledSitesList} ?` : `Would you like to set a schedule run for  ${selectedScheduledSitesList.length} sites?`}
+              </p>
 
-              <div className='d-flex gap-2 align-items-center'>
+              <div className="flex gap-2 items-center">
                 <label>Schedule Time</label>
                 <input
                   type="text"
                   placeholder="Hrs"
                   value={scheduleHours}
                   onChange={handleScheduleHoursChange}
-                  style={{ width: "4rem" }}
+                  className="w-16"
                 />
                 <label>Hrs</label>
                 <label>:</label>
@@ -162,20 +170,26 @@ const Base = () => {
                   placeholder="Mins"
                   value={scheduleMinutes}
                   onChange={handleScheduleMinutesChange}
-                  style={{ width: "5rem" }}
+                  className="w-20"
                 />
                 <label>Mins</label>
               </div>
 
-              <div className='d-flex justify-content-end gap-3'>
-                <Button onClick={cancelScheduling} variant='danger'>Cancel</Button>
-                <Button disabled={isProcessing} onClick={confirmScheduling} variant='success'>{isProcessing ? `Processing...` : `Confirm`}</Button>
+              <div className="flex justify-end gap-3">
+                <button onClick={cancelScheduling} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                  Cancel
+                </button>
+                <button
+                  disabled={isProcessing}
+                  onClick={confirmScheduling}
+                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                >
+                  {isProcessing ? 'Processing...' : 'Confirm'}
+                </button>
               </div>
             </div>
-
           </div>
         </>}
-
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import axios from 'axios';
-import React, { useState } from 'react'
-import { Form, Button, Alert, Spinner } from 'react-bootstrap';
+import api from '../services/api';
+import React, { useState } from 'react';
 
 const SslGeneratorForm = ({ setCertificate }) => {
     const [details, setDetails] = useState({
@@ -36,7 +36,7 @@ const SslGeneratorForm = ({ setCertificate }) => {
         //     setLoading(false);
         // })
 
-        axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ssl/generate-cert`, details).then(res => {
+       api.post("/api/ssl/generate-cert", details).then(res => {
             setLoading(false);
 
             if (res.data.error) {
@@ -55,12 +55,12 @@ const SslGeneratorForm = ({ setCertificate }) => {
     }
 
 
-   
+
     const handleDownloadChallenge = () => {
         const element = document.createElement('a');
-        const file = new Blob([challengeData.keyAuthorization],{ type: 'application/octet-stream' });
+        const file = new Blob([challengeData.keyAuthorization], { type: 'application/octet-stream' });
         element.href = URL.createObjectURL(file);
-        element.download = challengeData.httpChallenge.token; 
+        element.download = challengeData.httpChallenge.token;
         element.click();
     };
 
@@ -68,7 +68,7 @@ const SslGeneratorForm = ({ setCertificate }) => {
     const handleVerifyChallenge = () => {
         setLoading2(true);
 
-        axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/ssl/verify-domain`, { challengeData, domain: details.domain }).then(res => {
+        api.post("/api/ssl/verify-domain", { challengeData, domain: details.domain }).then(res => {
             if (res.data.error) {
                 setLoading(false);
                 setError(res.data.error)
@@ -89,56 +89,63 @@ const SslGeneratorForm = ({ setCertificate }) => {
     // console.log(certificateData)
 
     return (
-        <div style={{ backgroundColor: "#242627" }} className='p-4 w-50 rounded'>
-
-            <div className='d-flex flex-column align-items-center'>
-                <h3>Free SSL Certificate Generator</h3>
-                <p>Create a Free Let's Encrypt SSL Certificate in a few minutes.</p>
+        <div className="bg-gray-800 p-4 w-[30rem] h-screen rounded">
+            <div className="flex flex-col items-center">
+                <h3 className="text-white">Free SSL Certificate Generator</h3>
+                <p className="text-gray-400">Create a Free Let's Encrypt SSL Certificate in a few minutes.</p>
             </div>
 
-            <Form onSubmit={handleSubmit}>
-                <Form.Group className='mb-3'>
-                    <Form.Label>Enter Domain Name</Form.Label>
-
-                    <Form.Control
+            <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="mb-3">
+                    <label className="block text-white">Enter Domain Name</label>
+                    <input
                         type='text'
                         placeholder='Enter your domain name(s)'
                         value={details.domain}
                         onChange={(e) => setDetails({ ...details, domain: e.target.value })}
                         required
-                        style={{ padding: "0.8rem" }}
+                        className="w-full p-3 bg-gray-700 border border-gray-700 text-white rounded"
                     />
+                </div>
 
-                </Form.Group>
-
-                <Form.Group className='mb-3'>
-                    <Form.Label>Enter your email</Form.Label>
-
-                    <Form.Control
+                <div className="mb-3">
+                    <label className="block text-white">Enter your email</label>
+                    <input
                         type='email'
                         placeholder='Enter your email address'
                         value={details.email}
                         onChange={(e) => setDetails({ ...details, email: e.target.value })}
                         required
-                        style={{ padding: "0.8rem" }}
+                        className="w-full p-3 bg-gray-700 border border-gray-700 text-white rounded"
                     />
+                </div>
 
-                </Form.Group>
-
-
-
-                <Button variant='primary' type='submit' disabled={loading}>
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
                     {loading ? 'Generating...' : 'Create free SSL Certificate'}
-                </Button>
+                </button>
 
-                {error && <Alert variant='danger' className='mt-3'>{error}</Alert>}
+                {error && <div className="mt-3 text-red-500">{error}</div>}
 
                 {challengeData && (
-                    <div className='mt-3'>
-                        <h5 style={{ marginBottom: "1rem", marginTop: "1rem" }}>Download and Verify Challenge File</h5>
-                        <h5 style={{ marginBottom: "1rem", marginTop: "1rem" }}>{message}</h5>
-                        <Button variant='secondary' onClick={handleDownloadChallenge} style={{ marginRight: "1rem" }}>Download Challenge File</Button>
-                        <Button variant='secondary' onClick={handleVerifyChallenge} className='ml-2'>{loading2 ? <Spinner animation="border" /> : `Verify Challenge`}</Button>
+                    <div className="mt-3">
+                        <h5 className="mb-4 mt-4 text-white">Download and Verify Challenge File</h5>
+                        <h5 className="mb-4 mt-4 text-white">{message}</h5>
+                        <button
+                            onClick={handleDownloadChallenge}
+                            className="mr-4 py-2 px-4 bg-gray-600 text-white rounded hover:bg-gray-700"
+                        >
+                            Download Challenge File
+                        </button>
+                        <button
+                            onClick={handleVerifyChallenge}
+                            className="py-2 px-4 bg-gray-600 text-white rounded hover:bg-gray-700"
+                        >
+                            {loading2 ? <span className="spinner-border" /> : 'Verify Challenge'}
+                        </button>
                     </div>
                 )}
 
@@ -153,7 +160,7 @@ const SslGeneratorForm = ({ setCertificate }) => {
                     </Alert>
                 )} */}
 
-            </Form>
+            </form>
         </div>
     )
 }

@@ -5,7 +5,7 @@ import DisplaySSLCert from '../Components/DisplaySSLCert'
 const SslGeneratorPage = () => {
   const [certData, setCertData] = useState(null) 
   return (
-    <div className='w-100 vh-100 d-flex ps-2 gap-2'>
+    <div className='w-full h-screen d-flex ps-2 gap-2'>
           <SslGeneratorForm setCertificate={setCertData}/>
           {certData&&<DisplaySSLCert cert={certData}/>}
     </div>

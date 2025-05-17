@@ -38,3 +38,74 @@
   .btn-close{
     --bs-btn-close-color: white !important;
   }
+
+   /* SitesTable.css */
+   .custom-ant-table .ant-table {
+     background: #242627 !important;
+     color: white !important;
+   }
+   .custom-ant-table .ant-table-thead > tr > th {
+     background: #151718 !important;
+     color: #3CA1FF !important;
+     border-bottom: 1px solid #3CA1FF !important;
+   }
+   .custom-ant-table .ant-table-tbody > tr > td {
+     background: #242627 !important;
+     color: white !important;
+     border-bottom: 1px solid #3CA1FF !important;
+   }
+   .custom-ant-table .ant-checkbox-inner {
+     background-color: #151718 !important;
+     border-color: #3CA1FF !important;
+   }
+   .custom-ant-table .ant-checkbox-checked .ant-checkbox-inner {
+     background-color: #3CA1FF !important;
+     border-color: #3CA1FF !important;
+   }
+   .custom-ant-table .ant-pagination-item {
+  background: #23272f !important;
+  color: #3CA1FF !important;
+  border: 2px solid #3CA1FF !important;
+  font-weight: bold !important;
+  box-shadow: 0 0 4px #3CA1FF55;
+  transition: background 0.2s, color 0.2s;
+}
+.custom-ant-table .ant-pagination-item-active {
+  background: #3CA1FF !important;
+  color: #151718 !important;
+  border: 2px solid #3CA1FF !important;
+  font-weight: bold !important;
+  box-shadow: 0 0 8px #3CA1FF;
+}
+.custom-ant-table .ant-pagination-item a {
+  color: inherit !important;
+}
+.custom-ant-table .ant-pagination-item-active a {
+  color: inherit !important;
+}
+.custom-ant-table .ant-pagination-prev .ant-pagination-item-link,
+.custom-ant-table .ant-pagination-next .ant-pagination-item-link {
+  color: #3CA1FF !important;
+  background: #23272f !important;
+  border: 2px solid #3CA1FF !important;
+  font-weight: bold !important;
+}
+.custom-ant-table .ant-pagination-prev .ant-pagination-item-link:disabled,
+.custom-ant-table .ant-pagination-next .ant-pagination-item-link:disabled {
+  color: #555 !important;
+  border-color: #333 !important;
+}
+
+/* Make Ant Design Spin loader white */
+.ant-spin-dot-item {
+  background-color: #fff !important;
+}
+
+/* Make Ant Design Progress percent text white */
+.ant-progress-text {
+  color: #fff !important;
+}
+
+.ant-progress-inner{
+  background-color: rgba(106, 98, 98, 0.115) !important;
+}

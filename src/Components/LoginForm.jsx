@@ -1,57 +1,68 @@
 import React, { useState } from 'react'
-import Button from "react-bootstrap/Button"
-import Form from "react-bootstrap/Form"
-import { Spinner } from 'react-bootstrap'
-import axios from "axios"
+import api from '../services/api'
 import { useNavigate, Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { Spin } from 'antd';
 
 const LoginForm = () => {
-  const [loading, setLoading]=useState(false)
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
   const [loginDetails, setLoginDetails] = useState({
-    email:"",
-    password:"",
+    email: "",
+    password: "",
   })
 
-  const handleSubmit = (e) =>{
+  const handleSubmit = (e) => {
     // console.log(loginDetails)
     e.preventDefault()
     setLoading(true)
-    axios.post("https://webvalidator-ssl-backend.onrender.com/api/auth/Login",loginDetails).then(res=>{
-     if(res.data.message == "Login succesfully"){
-      // console.log(res.data.user)
-      localStorage.setItem("User",JSON.stringify(res.data.user))
-      setLoading(false)
-      navigate("/home")
-     }
-    }).catch(err=>{
+    api.post("/auth/Login", loginDetails).then(res => {
+      if (res.data.message == "Login succesfully") {
+        // console.log(res.data.user)
+        localStorage.setItem("User", JSON.stringify(res.data.user))
+        setLoading(false)
+        navigate("/home")
+      }
+    }).catch(err => {
       console.log(err.response.data.message)
       toast.error(`${err.response.data.message}`)
       setLoading(false)
     }
     )
-}
+  }
   return (
-    <div>
-         <Form onSubmit={handleSubmit} style={{backgroundColor:"#242627"}} className='p-4 rounded'>
-                    
-                    <Form.Group className="mb-4" controlId="formBasicEmail">
-                        <Form.Label>Email</Form.Label>
-                        <Form.Control type="email" onChange={e=> setLoginDetails({...loginDetails,email:e.target.value})} placeholder="Enter email"  style={{padding:"0.9rem",backgroundColor:"#605C5C", border:"#605C5C", color:"white"}}/>
-                    </Form.Group>
+    <div className="bg-gray-800 p-4  rounded">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="mb-3">
+          <label className="block text-white">Email address</label>
+          <input
+            type="email"
+            onChange={(e) => setLoginDetails({ ...loginDetails, email: e.target.value })}
+            placeholder="Enter email"
+            className="w-full p-3 bg-gray-700 border border-gray-700 text-white rounded"
+          />
+        </div>
 
-                    <Form.Group className="mb-4" controlId="formBasicPassword">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" onChange={e=> setLoginDetails({...loginDetails,password:e.target.value})} placeholder="Password" style={{padding:"0.9rem",backgroundColor:"#605C5C", border:"#605C5C", color:"white"}}/>
-                    </Form.Group>
-        
-              <Button disabled={loading} variant="primary" type="submit" className='w-100 mt-2' style={{padding:"0.9rem"}}>{loading?<Spinner animation="border"/>:`Login`}</Button>
-            </Form>
+        <div className="mb-3">
+          <label className="block text-white">Password</label>
+          <input
+            type="password"
+            onChange={(e) => setLoginDetails({ ...loginDetails, password: e.target.value })}
+            placeholder="Password"
+            className="w-full p-3 bg-gray-700 border border-gray-700 text-white rounded"
+          />
+        </div>
 
-           
-              <Link className='text-primary' to='/Reset-password'>Forgotten your password?</Link>
+        <button
+          disabled={loading}
+          type="submit"
+          className="w-full py-3 mb-4 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
+        >
+          {loading ? <Spin /> : 'Login'}
+        </button>
+      </form>
 
+      <Link className='text-blue-500' to='/Reset-password'>Forgotten your password?</Link>
     </div>
   )
 }

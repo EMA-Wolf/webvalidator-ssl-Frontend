@@ -1,33 +1,33 @@
 import React from 'react'
 import "./css/LoginPage.css"
 import { Outlet, NavLink } from 'react-router-dom'
-import Nav from 'react-bootstrap/Nav';
 import miniPerson from "../assets/miniperson.png"
 import codeTag from "../assets/codetag.png"
 import miniPlant from "../assets/miniplant.png"
 import bigPlant from "../assets/bigplant.png"
+
 const LoginPage = () => {
 
   return (
-    <div className='d-flex justify-content-center align-items-center vh-100 position-relative'>
+    <div className="flex justify-center items-center h-screen relative">
 
-                <div style={{width:"34%"}}>
+      <div className="w-1/3">
 
-                <Nav className='d-flex gap-3 mb-2' style={{fontSize:"1.5rem"}}>
-                    <NavLink to='' >Login</NavLink>
+        <nav className="flex gap-3 mb-2 text-2xl">
+          <NavLink to="" className="text-blue-500 hover:text-blue-700">Login</NavLink>
 
-                    <NavLink to="/Signup">SignUp</NavLink>
-                </Nav>
-
-                    
-            <Outlet/>
-                </div>
+          <NavLink to="/Signup" className="text-blue-500 hover:text-blue-700">SignUp</NavLink>
+        </nav>
 
 
-            <img src={miniPerson} alt="" className='w-auto h-25 position-absolute bottom-0 start-0'/>
-            <img src={codeTag} alt="" className='w-auto h-25 position-absolute top-0 start-0'/>
-            <img src={miniPlant} alt="" className='w-auto h-25 position-absolute bottom-0 end-0'/>
-            <img src={bigPlant} alt="" className='w-auto h-25 position-absolute top-0 end-0'/>
+        <Outlet />
+      </div>
+
+
+      <img src={miniPerson} alt="" className="w-auto h-1/4 absolute bottom-0 left-0" />
+      <img src={codeTag} alt="" className="w-auto h-1/4 absolute top-0 left-0" />
+      <img src={miniPlant} alt="" className="w-auto h-1/4 absolute bottom-0 right-0" />
+      <img src={bigPlant} alt="" className="w-auto h-1/4 absolute top-0 right-0" />
     </div>
   )
 }
